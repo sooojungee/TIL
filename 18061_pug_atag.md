@@ -21,4 +21,4 @@ a(href="www.naver.com", title="naver") 네이버로 가기
 ```
 a.main(href="www.naver.com", title="naver") 네이버로 가기
 ```
-이때 main이라는 클래스를 클릭하면 www.naver.com으로 이동한다.
+이때 main이라는 클래스를 클릭하면 www.naver.com 으로 이동한다.
