@@ -208,3 +208,46 @@ module.exports = {
 `html-webpack-plugin`은 생성된 모든 번들을 자동으로 주입하여 애플리케이션에 사용할 html 파일을 생성한다.
 
 
+webpack 플러그인은 `apply` 메소드를 가진 JavaScript 객체이다. 
+이 `apply` 메소드는 webpack 컴파일러에서 호출하여 전체 컴파일 수명주기에 액세스 할 수 있다.
+
+```js
+const pluginName = 'consoleLogOnBuildWebpackPlugin'
+
+class COnsoleLogOnBuildWebpackPlugin {
+	apply(compiler) {
+		compiler.hooks.run.tap(pluginName, compliation => {
+			console.log('The webpack build process is srarting!!')
+		})
+	}
+}
+```
+컴파일러 훅의 `tap` 메소드의 첫번째 매개변수는 camelized 버전의 플러그인 이름이어야한다.
+
+플러그인은 arguments/options 사항을 취할 수 있으므로 웹팩 구성의 플러그인 속성에 새 인스턴스를 전달해야 한다.
+
+```js
+const HtmlWebpackPlugin = require('html-webpack-plugin')
+const webpack = require('webpack')
+const path = require('path')
+
+module.exports = {
+	entry: './path/to/my/entry/file.js',
+	output: {
+		filename: 'my-first-webpack.bundle.js',
+		path: path.resolve(__dirname, 'dist')
+	},
+	module: {
+		rules: [
+			{
+				test: /\.(js|jsx)$/,
+				user: 'babel-loader'
+			}
+		]
+	},
+	plugins: [
+		new webpack.ProgressPlugin(),
+		new HtmlWebpackPlugin({ template: './src/index.html' })
+	]
+}
+```
