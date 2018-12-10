@@ -34,7 +34,7 @@ let age: number = 37;
 let sentence: string = `Hello, my name in ${fullName}. 
 I'll be ${age + 1} yaers old next month.`;
 ```
-``에 둘러싸여 있으며 ${ expr } 형식의 표현식을 사용할 수 있다.
+에 둘러싸여 있으며 ${ expr } 형식의 표현식을 사용할 수 있다.
 
 ## Array
 
@@ -64,7 +64,7 @@ console.log(x[1].substr(1)); // x
 인덱스가 있는 요소에 접근할 때 올바른 유형이 검색된다.
 
 ```ts
-// 사이트에서는 된다고 했는데 안됨
+// 2.7 이하의 버전에서는 배열의 요소가 튜플 타입에 선언된 개수를 초과하면 유니언 타입을 적용받았지만 지금은 아니다.
 x[3] = "world";
 console.log(x[5].toString());
 x[6] = true;
@@ -95,6 +95,7 @@ console.log(c)		// 2
 ```ts
 enum Color {Red = 1, Green = 2, Blue = 4}
 let c: Color = Color.Green
+// 숫자와 문자열만 해당된다.
 
 console.log(c)		// 2
 ```
@@ -106,6 +107,13 @@ let colorName: string = Color[2];
 
 console.log(colorName);		// Green
 ```
+
+리버스 매핑을 하기 때문이다.
+```ts
+console.log(JSON.stringify(Color));
+// 결과 값: {"1": "Red", "2": "Green", "3": "Blue", "Red": "1", "Green": "2", "Blue" : "3"}
+```
+
 
 ## Any
 
@@ -120,6 +128,7 @@ notSure = false
 `any` 타입은 기존 JavaScript와 같이 작업하는 강력한 방법 중 하나이다.
 컴파일 하는 동안 옵트 인하거나 옵트아웃 할 수 있다.
 JavaScript의 Object 타입과 비슷한 역할을 하지만 `object` 타입의 변수는 값을 할당만 할 수 있다.
+any는 런타임시에 속성의 유무를 검사하고 object는 컴파일 시에 속성의 유무를 검사한다.
 실제로 존재하는 메소드라도 임의의 메소드를 호출할 수는 없다.
 
 ```ts
@@ -136,6 +145,24 @@ prettySure.toFixed()		// ts에서 실행하면 에러
 let list: any[] = [1, true, "free"]
 list[1] = 100
 ```
+
+### noImplicitAny 옵션
+
+타입 선언을 생략했을 때 암시적으로 any 타입이된다.
+any 타입의 사용을 강제하려면 컴파일러 옵션 중 noImplicitAny를 true로 설정하면 된다.
+```
+// tsconfig.json
+{
+	"compilerOptions": {
+		"noImplicitAny": true
+	}
+}
+```
+
+`noImplicitAny` 옵션은 `false`가 기본값이므로 이 옵션을 생략한다면 any타입임을 생략해도 괜찮다.
+옵션이 true일 때 함수의 매개변수에서 any타입을 선언하지 않으면 컴파일 오류가 발생한다.
+
+
 
 ## Void
 
