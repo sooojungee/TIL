@@ -221,7 +221,7 @@ class Cube {
 ```ts
 class PC {
 	constructor(public hddCapacity: string) { }
-	private ram: string = "OG"
+	private ram: string = "0G"
 	set ramCapacity(value: string) { this.ram = value }
 	get ramCapacity() { return this.ram }
 
@@ -259,4 +259,78 @@ myDesktop.getInfo()
 5번 HDD 용량: 16G 16G
 6번 HDD 용량: 8G 8G
 ```
+- super 키워드는 부모 클래스의 멤버 변수를 직접 호출할 수 없다. 부모 클래스의 멤버 변수 값을 가져오려면 메서드 / getter을 통해서 가져와야한다.
+
+### public 제한자와 private 제한자
+
+**public**제한자는 클래스 내부와 외부에서 모두 접근할 수 있게 공개하는 접근제한자이다.
+부모 클래스로부터 상속도 가능하다.
+
+**private**제한자는 클래스 내부에서는 접근할 수 있지만 외부에서는 접근할 수 없다.
+
+### protected 제한자
+
+**protected** 제한자는 객체를 통한 외부 접근은 허용하지 않지만 상속 관계에서 부모 클래스에 protected로 선언된 메서드나 멤버 변수의 접근을 허용한다.
+
+### 기본 접근 제한자
+
+기본 접근 제한자는 접근 제한자 선언을 생략할 때 사용된다.
+기본 접근 제한자가 적용될 수 있는 대상은 클래스의 멤버 변수, 멤버 메서드, 클래스 Get/Set 프로퍼티, 생성자의 매개변수이다.
+
+
+### 추상클래스를 이용한 공통 기능 정의
+
+추상 클래스(abstract class)는 구현 메서드는 구현 메서드와 추상 메서드(abstract method)가 동시에 존재할 수 있다.
+구현 메서드: 실제 구현 내용을 포함한 메서드
+추상 메서드: 선언만된 메서드
+추상 클래스는 구현 내용이 없는 추상 클래스를 포함하기 떄문에 불완전한 클래스이다. 따라서 추상 클래스는 단독으로 객체를 생성할 수 없다.
+**추상 클래스를 상속하고 구현 내용을 추가하는 자식 클래스를 통해 객체를 생성해야한다.**
+
+```ts
+abstract class Animal {
+	abstract makeSound(): void;
+	move(): void {
+		console.log("roaming the earth...");
+	}
+}
+```
+`abstract`로 표시된 추상 클래스 내의 메소드에는 Implementation이 포함되어있지 않으므로 파생 클래스에서 구현해야한다.
+추상 메서드는 `abstract`키워드를 포함해야하며 선택적으로 Getter/Setter를 포함할 수 있다.
+추상 클래스에서 추상 멤버 변수가 선언돼 있으면 자식 클래스에서도 선언해야한다.
+static이나 private과 함께 선언할 수 없다. => public으로 선언하는 것이 좋다.
+
+추상 클래스에서 선언한 추상 메서드는 오버라이딩해서 자식 클래스에서 반드시 구현해야한다.
+
+```ts
+abstract class AbstractBird {
+
+	abstract birdName: string;
+	abstract habitat: string;
+
+	abstract flySound(sound: string);
+
+	fly(): void {
+		this.flySound("파닥파닥")
+	}
+
+	getHabitat(): void {
+		console.log(`<${this.birdName}>의 서식지는 <${this.habitat}>입니다.`)
+	}
+
+}
+
+class WildGoose extends AbstractBird {
+	constructor(public birdName: string, public habitat: string) {
+		super()
+	}
+	flySound(sound: string) {
+		console.log(`<${this.birdName}>가 <${sound}> 날아갑니다.`)
+	}
+}
+
+let wildGoos = new WildGoose("기러기", "순천만 갈대밭");
+wildGoose.fly();
+wildGoose.getHabitat();
+```
+
 
