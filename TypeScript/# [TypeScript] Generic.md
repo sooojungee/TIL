@@ -2,6 +2,7 @@
 
 ### 정의
 제네릭은 모든 타입의 객체를 다루면서도 객체 타입이 무결성을 유지하는 코드를 작성하는 방법이다.
+제네릭을 쓰는 가장 큰 이유는 타입을 변수로 주고싶을 때 사용하는 것
 
 ## Hello World of Generics
 
@@ -40,6 +41,7 @@ let output = identity<string>("myString");
 <2. 파라미터 타입에 reference를 사용하기 >
 ```ts
 let output = identity("myString");
+identity("hello").length; // string 내장 함수를 사용할 수 있다.
 // 리턴 타입은 string 타입일 것이다.
 ```
 컴파일러가 전달하는 타입에 따라 자동으로 `T`의 값을 설정한다.
@@ -172,3 +174,86 @@ alert(stringNumeric.add(stringNumeric.zeroValue, "test"));
 > Generic 클래스는 Static 측면보다 Instance 측면에서 Generic하기 때문에 **클래스로 작업할 때 Static 멤버는 클래스의 Type파라미터를 사용할 수 없다.**
 
 
+## Generic Constraint
+
+```ts
+function loggingIdentity<T>(arg: T): T {
+	console.log(arg.length);
+	return arg;
+}
+```
+이 함수가 임의의 모든 타입으로 작업하는 대신에, `length` 프로퍼티를 가진 모든 타입과 함께 동작하도록 제한하고 싶을때
+`T`가 될 수 있는 것에 대한 제약사항이 우리의 요구사항을 나열하여 이 프로퍼티가 있는 타임을 허용할 수 있다.
+
+### extends
+제약 조건을 설명하는 인터페이스를 만들고 `extends` 키워드를 사용한다.
+```ts
+interface Lengthwise {
+	length: number;
+}
+
+function loggingIdentity<T extends Lengthwise>(arg: LeT): T {
+	console.log(arg.length);
+	return arg;
+}
+
+loggingIdentity(3);	// error : number은 .length 프로퍼티를 가지고 있지 않기 떄문이다.
+```
+Generic 함수는 이제 제한되어있으므로 더이상 모든 타입에서 작동하지 않는다.
+
+### Generic Constraint에서 Type 파라미터 사용하기
+
+다른 type 파라미터에 의해 제한되는 type파라미터를 선언할 수 있다.
+
+예를들어, 이름이 있는 객체로부터 프로퍼티를 얻고 싶을 때,
+`obj`에 존재하지 않는 프로퍼티를 잡아내지 않도록 제약 조건을 적용할 수 있다.
+```ts
+function getProperty<T, K extends keyof T>(obj: T, key: K): T[] {
+	return obj[key];
+}
+
+let x = {a: 1, b: 2, c: 3};
+
+getProperty(x, "a");	// 1
+getProperty(x, "d");	// Error
+```
+
+## Generic에서 클래스 타입 사용하기
+
+TypeScript에서 Generic을 사용하여 팩토리를 생성할 때,
+생성자 함수를 사용하여 클래스 타입을 참조해야한다.
+```ts
+function create<T>(c: {new(): T;}): T{
+	return new c();
+}
+```
+< 예제 >
+
+```ts
+class BeeKeeper {
+	hasMask: boolean;
+}
+
+class ZooKeeper {
+	nametag: string;
+}
+
+class Animal {
+	numLegs: number;
+}
+
+class Bee extends Animal {
+	keeper: BeeKeeper;
+}
+
+class Lion extends Animal {
+	keeper: ZooKeeper;
+}
+
+function createInstance<A extends Animal>(c: new() => A): A {
+	return new c();
+}
+
+createInstance(Lion).keeper.nametag;
+createInstance(Bee).keeper.hasMask;
+```
