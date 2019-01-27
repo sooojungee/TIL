@@ -106,6 +106,70 @@ for (let i of list) {
 
 `Map`과 `Set`같은 내장 객체는 저장된 값에 접근할 수 있는 `Symbol.iterator` 속성이 있다.
 
+### Symbol.iterator
+
+- 프로퍼티이며, 함수가 구현되어 있으면, iterable이라고 한다.
+- 작용을 통해서 iterable한 애들을 다루는 것
+
+- 객체에 Symbol.iterator이 구현되어 있어야한다.
+- Array, Map, Set, String, Int32Array, Uint32Array, etc.에는 내장된 Symbol.iterator가 구현되어 있어서 이터러블하다.
+
+- 일반적으로 custom하게 만든 애들은 이터러블하지 않음
+- 이터레이터를 통해 이터러블한 객체의 Symbol.iterator 함수를 소출한다.
+
+- es6여야 한다. (es5, es3으로 하면 오류를 뱉어냄.)
+
+```ts
+// lib.es6.d.ts
+
+interface IteratorResult<T> {
+	done: boolean;
+	value: T;
+}
+
+interface Iterator<T> {
+	next(value? any): IteratorResult<T>;
+	return? (value?: any): IteratorResult<T>;
+	throw?(e?: any): IteratorResult<T>;
+}
+
+interface Iterable<T> {
+	[Symbol.iterator](): Iterator<T>;
+}
+
+interface IterableIterator<T> extends Iterator<T> {
+	[Symbol.iterator](): IterableIterator<T>;
+}
+```
+
+### custom iterator
+
+```ts
+class CustomIterable implements Iterable<string> {
+	private _array: Array<string> = ['first', 'second'];
+
+	[Symbol.iterator]() {
+		let nextIndex = 0;
+
+		return {
+			next: () => {
+				return. {
+					value: this._array[nextIndex++],
+					done: nextIndex < array.length
+				}
+			}
+		}
+	}
+
+}
+
+const cIterable = new CustomIterable();
+
+for (const item of cIterable) {
+	console.log(item);
+}
+```
+
 
 
 
